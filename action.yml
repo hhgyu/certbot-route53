@@ -1,0 +1,49 @@
+name: 'Certbot Route53'
+description: 'Github action that adds/renews a Letsencrypt certificate to an Route53.'
+inputs:
+  aws-access-key-id:
+    description: 'AWS ACCESS KEY ID'
+    required: true
+  aws-access-key:
+    description: 'AWS ACCESS KEY'
+    required: true
+  aws-region:
+    description: 'AWS region'
+    required: true
+  bucket:
+    description: 'AWS bucket where the certificate is stored'
+    required: true
+  bucket-path:
+    description: 'AWS bucket path where the certificate is stored'
+    required: false
+  tar-password:
+    description: 'Password that will be used to protect the tar file uploaded to bucket (recommended)'
+    required: false
+    default: ''
+  email:
+    description: 'The email that will be used when generating your letsencrypt certificates'
+    required: true
+  domains:
+    description: 'Comma-separated list of domains for which certificates will be generated. For example: "example.com,*.example.com"'
+    required: true
+  file-path:
+    description: 'The relative path (without a leading /) for the created/renewed certificate. The ".tar.gz" extension will be automatically appended.'
+    required: true
+  test-cert:
+    description: 'Send a request to the staging server instead of the production server (useful for testing).'
+    required: false
+    default: 'false'
+  dry-run:
+    description: 'Simulate the process without generating the certificate. Useful for testing configurations.'
+    required: false
+    default: 'false'
+outputs:
+  certificate-name:
+    description: 'The name of the create/renewed certificate'
+  certificate-path:
+    description: 'The path of the generated or renewed certificate file.'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ toJson(inputs) }}
