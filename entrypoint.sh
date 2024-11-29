@@ -100,8 +100,12 @@ echo '*************** Uploading created/renewed certificate to storage *********
 aws s3 cp $CERTBOT_FILE_PATH s3://$BUCKET/$CERTBOT_FILE_PATH
 aws s3 cp $FILE_PATH s3://$BUCKET/$FILE_PATH
 
+echo '*************** Copying the created/renewed certificate to a local directory for further processing ***************'
+mkdir -p $PWD/${FIRST_DOMAIN}
+cp -rL /etc/letsencrypt/live/${FIRST_DOMAIN}/ $PWD/${FIRST_DOMAIN}
+
 echo "certificate-name=${NAME}" >> "$GITHUB_OUTPUT"
-echo "certificate-path=/etc/letsencrypt/live/${FIRST_DOMAIN}/" >> $GITHUB_OUTPUT
+echo "certificate-path=${PWD}/${FIRST_DOMAIN}/" >> $GITHUB_OUTPUT
 
 echo '*************** Cleaning up ***************'
 rm -rf /etc/letsencrypt/*
