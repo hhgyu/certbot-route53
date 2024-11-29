@@ -20,7 +20,6 @@ This GitHub Action allows you to add or renew Let's Encrypt certificates using C
 | `aws-access-key`   | AWS Secret Access Key for Route53 and S3 operations.                                                 | ✅        | -              |
 | `aws-region`       | AWS Region where Route53 and S3 are located.                                                         | ✅        | -              |
 | `bucket`           | AWS S3 bucket where the certificate is stored.                                                       | ✅        | -              |
-| `bucket-path`      | Path within the bucket to store the certificate.                                                     | ❌        | -              |
 | `tar-password`     | Password to protect the uploaded tar file (optional).                                                | ❌        | `''`           |
 | `email`            | Email for Let's Encrypt account (used for renewal notifications).                                    | ✅        | -              |
 | `domains`          | Comma-separated list of domains for which certificates will be generated.                            | ✅        | -              |
@@ -36,6 +35,7 @@ This GitHub Action allows you to add or renew Let's Encrypt certificates using C
 |--------------------|---------------------------------------------------------------|
 | `certificate-name` | The name of the generated or renewed certificate.             |
 | `certificate-path` | The path to the generated or renewed certificate file.        |
+| `certificate-s3-path` | The S3 path where the generated or renewed certificate file is stored.     |
 | `renewal-status`   | Indicates whether the certificate was renewed (`renewed`) or skipped because it was not yet due for renewal (`not-renewed`). |
 
 ---
@@ -56,7 +56,6 @@ jobs:
           aws-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: "us-east-1"
           bucket: "my-s3-bucket"
-          bucket-path: "certificates"
           email: "user@example.com"
           domains: "example.com,*.example.com"
           file-path: "certs/example"

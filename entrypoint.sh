@@ -9,7 +9,6 @@ AWS_ACCESS_KEY_ID=$(echo "$input_json" | jq -r '.["aws-access-key-id"]')
 AWS_ACCESS_KEY=$(echo "$input_json" | jq -r '.["aws-access-key"]')
 AWS_REGION=$(echo "$input_json" | jq -r '.["aws-region"]')
 BUCKET=$(echo "$input_json" | jq -r '.bucket')
-BUCKET_PATH=$(echo "$input_json" | jq -r '.["bucket-path"]')
 TAR_PASSWORD=$(echo "$input_json" | jq -r '.["tar-password"]')
 EMAIL=$(echo "$input_json" | jq -r '.email')
 DOMAINS=$(echo "$input_json" | jq -r '.domains')
@@ -113,6 +112,7 @@ cp -rL /etc/letsencrypt/live/${FIRST_DOMAIN}/ $PWD/${FIRST_DOMAIN}
 
 echo "certificate-name=${NAME}" >> "$GITHUB_OUTPUT"
 echo "certificate-path=${PWD}/${FIRST_DOMAIN}/" >> $GITHUB_OUTPUT
+echo "certificate-s3-path=s3://$BUCKET/$FILE_PATH" >> $GITHUB_OUTPUT
 
 echo '*************** Cleaning up ***************'
 rm -rf /etc/letsencrypt/*

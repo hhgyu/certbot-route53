@@ -13,9 +13,6 @@ inputs:
   bucket:
     description: 'AWS bucket where the certificate is stored'
     required: true
-  bucket-path:
-    description: 'AWS bucket path where the certificate is stored'
-    required: false
   tar-password:
     description: 'Password that will be used to protect the tar file uploaded to bucket (recommended)'
     required: false
@@ -42,6 +39,8 @@ outputs:
     description: 'The name of the create/renewed certificate'
   certificate-path:
     description: 'The path of the generated or renewed certificate file.'
+  certificate-s3-path:
+    description: 'The S3 path where the generated or renewed certificate file is stored.'
   renewal-status:
     description: "Indicates whether the certificate was renewed or not. Values: renewed, not-renewed"
 runs:
