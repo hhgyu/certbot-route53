@@ -8,6 +8,7 @@ This GitHub Action allows you to add or renew Let's Encrypt certificates using C
 - Securely stores certificates in an S3 bucket.
 - Optional password protection for the archived certificate files.
 - Supports testing mode using Let's Encrypt staging servers.
+- **Detects whether a certificate was renewed or not** and outputs the status.
 
 ---
 
@@ -35,6 +36,7 @@ This GitHub Action allows you to add or renew Let's Encrypt certificates using C
 |--------------------|---------------------------------------------------------------|
 | `certificate-name` | The name of the generated or renewed certificate.             |
 | `certificate-path` | The path to the generated or renewed certificate file.        |
+| `renewal-status`   | Indicates whether the certificate was renewed (`renewed`) or skipped because it was not yet due for renewal (`not-renewed`). |
 
 ---
 
@@ -48,6 +50,7 @@ jobs:
     steps:
       - name: Generate/Renew Certificates
         uses: hhgyu/certbot-route53@v1
+        id: certbot
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -58,3 +61,6 @@ jobs:
           domains: "example.com,*.example.com"
           file-path: "certs/example"
           test-cert: "true"
+
+      - name: Check Renewal Status
+        run: echo "Renewal status: ${{ steps.certbot.outputs.renewal-status }}"

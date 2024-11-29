@@ -68,15 +68,22 @@ else
 fi
 
 echo "*************** Creating or renewing certificate for $DOMAINS ***************"
-certbot certonly --agree-tos --non-interactive --dns-route53 -m $EMAIL \
+output=$(certbot certonly --agree-tos --non-interactive --dns-route53 -m $EMAIL \
   --cert-name ${FIRST_DOMAIN} \
-  $DOMAIN_ARGS $CERTBOT_OPTIONS
-if [[ $? -eq 0 ]]; then
-  echo "Certificate issued or renewed successfully."
-elif [[ $? -eq 2 ]]; then
-  echo "Certificate is already up to date. No renewal performed."
+  $DOMAIN_ARGS $CERTBOT_OPTIONS)
+exit_code=$?
+
+# Certbot 실행 결과 확인
+if [[ $exit_code -ne 0 ]]; then
+  echo "Certbot command failed with exit code $exit_code."
+  exit $exit_code
+fi
+
+# 갱신 여부 판단
+if [[ "$output" =~ "Certificate not yet due for renewal" ]]; then
+  echo "renewal-status=not-renewed" >> $GITHUB_OUTPUT
 else
-  echo "Certificate issuance or renewal failed."
+  echo "renewal-status=renewed" >> $GITHUB_OUTPUT
 fi
 
 tar -zcf $CERTBOT_FILE_PATH --directory /etc/letsencrypt/ .
