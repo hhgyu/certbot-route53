@@ -1,16 +1,18 @@
-FROM certbot/dns-route53
+FROM python:3.12-alpine
 
 RUN apk add --no-cache --update \
- curl \
- which \
- bash \
- gnupg \
+ augeas \
  aws-cli \
+ bash \
+ curl \
+ gnupg \
+ gzip \
  jq \
- tar \
+ libffi \
  openssl \
- libffi-dev py3-ctypes \
- augeas py3-augeas
+ tar \
+ which \
+ xz
 
 # python 3
 ENV PYTHONUNBUFFERED=1
@@ -21,8 +23,10 @@ RUN echo "**** install Python ****" && \
     echo "**** install pip ****" && \
     python3 -m ensurepip && \
     rm -r /usr/lib/python*/ensurepip && \
-    pip3 install --no-cache --upgrade pip setuptools wheel && \
+    pip3 install --no-cache --upgrade pip setuptools wheel certbot certbot-route53 && \
     if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi
+
+RUN mkdir -p /etc/letsencrypt
 
 COPY entrypoint.sh /entrypoint.sh
 

@@ -78,6 +78,12 @@ if [[ $exit_code -ne 0 ]]; then
   exit $exit_code
 fi
 
+# Certbot이 성공하면 /etc/letsencrypt가 존재해야 함
+if [[ ! -d /etc/letsencrypt ]]; then
+  echo "❌ Error: /etc/letsencrypt directory does not exist after Certbot execution."
+  exit 1
+fi
+
 # 갱신 여부 판단
 if [[ "$output" =~ "Certificate not yet due for renewal" ]]; then
   echo "renewal-status=not-renewed" >> $GITHUB_OUTPUT
