@@ -6,7 +6,11 @@ RUN apk add --no-cache --update \
  bash \
  gnupg \
  aws-cli \
- jq
+ jq \
+ tar \
+ openssl \
+ libffi-dev py3-ctypes \
+ augeas py3-augeas
 
 # python 3
 ENV PYTHONUNBUFFERED=1
