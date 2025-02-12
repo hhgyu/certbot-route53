@@ -3,7 +3,7 @@
 This GitHub Action allows you to add or renew Let's Encrypt certificates using Certbot and AWS Route53. The generated certificates are securely stored in an AWS S3 bucket.
 
 ## Features
-- Generate and renew SSL/TLS certificates using Certbot.
+- Generate and renew SSL/TTLS certificates using Certbot.
 - Supports wildcard certificates via DNS-01 challenges with AWS Route53.
 - Securely stores certificates in an S3 bucket.
 - Optional password protection for the archived certificate files.
@@ -24,6 +24,7 @@ This GitHub Action allows you to add or renew Let's Encrypt certificates using C
 | `email`            | Email for Let's Encrypt account (used for renewal notifications).                                    | ✅        | -              |
 | `domains`          | Comma-separated list of domains for which certificates will be generated.                            | ✅        | -              |
 | `file-path`        | Relative path for the certificate file (no leading `/`); `.tar.gz` is automatically appended.         | ✅        | -              |
+| `generate-fullcert`| Generate a full certificate chain + private key (e.g., for haproxy).                                  | ❌        | `false`        |
 | `test-cert`        | Use Let's Encrypt staging server for testing (set to `true` for testing purposes).                   | ❌        | `false`        |
 | `dry-run`          | Simulate the process without generating certificates (set to `true` for configuration testing).       | ❌        | `false`        |
 
@@ -60,6 +61,7 @@ jobs:
           domains: "example.com,*.example.com"
           file-path: "certs/example"
           test-cert: "true"
+          generate-fullcert: "true"
 
       - name: Check Renewal Status
         run: echo "Renewal status: ${{ steps.certbot.outputs.renewal-status }}"
