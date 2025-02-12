@@ -25,7 +25,10 @@ inputs:
     required: true
   file-path:
     description: 'The relative path (without a leading /) for the created/renewed certificate. The ".tar.gz" extension will be automatically appended.'
-    required: true
+  generate-fullcert:
+    description: 'Generate a full certificate chain + private key (e.g., for haproxy). Default is false.'
+    required: false
+    default: 'false'
   test-cert:
     description: 'Send a request to the staging server instead of the production server (useful for testing).'
     required: false

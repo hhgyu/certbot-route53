@@ -13,6 +13,7 @@ TAR_PASSWORD=$(echo "$input_json" | jq -r '.["tar-password"]')
 EMAIL=$(echo "$input_json" | jq -r '.email')
 DOMAINS=$(echo "$input_json" | jq -r '.domains')
 FILE_PATH=$(echo "$input_json" | jq -r '.["file-path"]')
+GENERATE_FULLCERT=$(echo "$input_json" | jq -r '.["generate-fullcert"]')
 
 CERTBOT_FILE_PATH=${FILE_PATH}_certbot.tar.gz
 FILE_PATH=${FILE_PATH}.tar.gz
@@ -84,12 +85,34 @@ if [[ ! -d /etc/letsencrypt ]]; then
   exit 1
 fi
 
+renewal_status="renewed"
 # 갱신 여부 판단
 if [[ "$output" =~ "Certificate not yet due for renewal" ]]; then
-  echo "renewal-status=not-renewed" >> $GITHUB_OUTPUT
-else
-  echo "renewal-status=renewed" >> $GITHUB_OUTPUT
+  renewal_status="not-renewed"
 fi
+
+if [[ $GENERATE_FULLCERT == "true" ]]; then
+  pushd /etc/letsencrypt/live/${FIRST_DOMAIN}/
+    if [[ ! -f fullcert.pem ]]; then
+      echo "fullcert.pem not found in /etc/letsencrypt/live/${FIRST_DOMAIN}/, creating it..."
+      cat privkey.pem fullchain.pem > fullcert.pem
+      renewal_status="renewed"
+    else
+      echo "fullcert.pem already exists in /etc/letsencrypt/live/${FIRST_DOMAIN}/, checking if it needs to be updated..."
+      current_fullcert=$(cat privkey.pem fullchain.pem)
+      existing_fullcert=$(cat fullcert.pem)
+      if [[ "$current_fullcert" != "$existing_fullcert" ]]; then
+        echo "fullcert.pem is outdated, updating it..."
+        cat privkey.pem fullchain.pem > fullcert.pem
+        renewal_status="renewed"
+      else
+        echo "fullcert.pem is up to date."
+      fi
+    fi
+  popd
+fi
+
+echo "renewal-status=$renewal_status" >> $GITHUB_OUTPUT
 
 tar -zcf $CERTBOT_FILE_PATH --directory /etc/letsencrypt/ .
 if [[ ! -z $TAR_PASSWORD ]]; then
