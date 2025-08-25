@@ -37,6 +37,12 @@ if [[ $(echo "$input_json" | jq -r '.["dry-run"]') == "true" ]]; then
   CERTBOT_OPTIONS+=" --dry-run"
 fi
 
+# 러너/스텝 디버그 활성 시
+if [ "${ACTIONS_RUNNER_DEBUG:-}" = "true" ] || [ "${ACTIONS_STEP_DEBUG:-}" = "true" ]; then
+  # certbot verbose
+  CERTBOT_OPTIONS+=" -v"
+fi
+
 echo '*************** Setting up awscli ***************'
 aws configure set output json
 aws configure set region $AWS_REGION
